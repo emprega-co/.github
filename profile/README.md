@@ -12,74 +12,82 @@ Seus serviços incluem recrutamento e seleção, terceirização de mão de obra
 
 Esta organização reúne o desenvolvimento do aplicativo mobile da Emprega.co, realizado como Trabalho de Conclusão de Curso do Técnico em Desenvolvimento de Sistemas do SENAI Suíço-Brasileira.
 
-O objetivo é levar a operação da Emprega.co para o celular e cobrir toda a jornada de contratação dentro de um único aplicativo: da publicação da vaga ao encerramento do contrato.
+O objetivo é levar a operação da Emprega.co para o celular e cobrir toda a jornada de contratação em um único aplicativo, da publicação da vaga ao encerramento do contrato.
 
 ## Como funciona
 
-1. O contratante cadastra a empresa e publica uma vaga.
-2. O candidato encontra a vaga, inclusive por proximidade via CEP, e se candidata.
-3. O contratante analisa as candidaturas e envia uma proposta.
-4. O candidato aceita ou recusa a proposta.
-5. Com o aceite, o contrato é formalizado e a taxa do serviço é paga via Pix.
-6. Contratante e candidato conversam pelo aplicativo durante o contrato.
-7. Ao final, o contrato é encerrado e as duas partes se avaliam.
+1. O contratante, pessoa física ou jurídica, publica uma vaga.
+2. O candidato encontra a vaga e se candidata.
+3. O contratante analisa a candidatura e pode abrir uma conversa com o candidato a partir da aprovação.
+4. Após uma etapa opcional de entrevista, o contratante envia uma proposta.
+5. Quando o candidato aceita, o contrato é criado aguardando pagamento.
+6. O contratante paga a taxa de colocação via Pix, e a confirmação do pagamento ativa o contrato.
+7. Ao final, o contrato é encerrado e as duas partes podem se avaliar.
 
 ## Funcionalidades
 
 **Candidato**
 
 - Cadastro rápido e perfil profissional editável por seção
-- Busca de vagas com filtro por CEP
+- Busca de vagas, inclusive por localização
 - Candidatura e acompanhamento do status
-- Recebimento e resposta de propostas
-- Acompanhamento de contratos
-- Treinamentos com inscrição, histórico e conclusão
+- Resposta a propostas e acompanhamento de contratos
+- Inscrição em cursos presenciais e histórico de participação
 
 **Contratante**
 
-- Cadastro e perfil da empresa
-- Publicação e gestão de vagas
+- Cadastro e perfil do contratante
+- Publicação, pausa e encerramento de vagas
 - Análise de candidaturas e envio de propostas
+- Pagamento da taxa de colocação via Pix
 - Gestão de contratos, incluindo cancelamento e encerramento
-- Pagamento da taxa do serviço via Pix
 
 **Recursos comuns**
 
 - Mensagens em tempo real
 - Notificações dentro do aplicativo
-- Avaliações entre contratante e candidato
+- Avaliação mútua após o contrato
 - Denúncia e bloqueio de usuários
 - Configurações e exclusão de conta
 
-**Administração**
+**Organizações parceiras e operação**
 
-- Painel administrativo para a equipe da Emprega.co acompanhar a operação da plataforma
+- Cadastro de cursos e turmas presenciais por ONGs parceiras
+- Painel web administrativo para moderação e acompanhamento da plataforma
 
 ## Arquitetura
 
-A solução é composta por três partes:
+A solução é composta por dois repositórios:
 
-- **Aplicativo mobile:** React Native com Expo e TypeScript, com navegação via React Navigation, estado global com Zustand e comunicação com a API via Axios.
-- **API:** serviço REST com WebSocket para mensagens em tempo real, sobre banco de dados PostgreSQL.
-- **Painel administrativo:** interface web de gestão da plataforma.
+- **Aplicativo mobile:** React Native com Expo e JavaScript, navegação com React Navigation, estado global com Zustand, requisições HTTP com Axios e mensagens em tempo real via STOMP sobre WebSocket.
+- **API:** Java 21 com Spring Boot, Spring Security com autenticação JWT, Spring Data JPA, PostgreSQL 16 com migrations em Flyway e documentação OpenAPI. A API também serve o painel administrativo, renderizado com Thymeleaf.
 
-Os ambientes são separados entre homologação, no Microsoft Azure, e produção, na AWS. Os pagamentos são processados pelo Mercado Pago, e a publicação nas lojas é feita via Expo para App Store e Google Play.
+Os pagamentos são processados por gateway externo, com confirmação por webhook. O ambiente de homologação roda no Microsoft Azure, com deploy automatizado via GitHub Actions, e o ambiente de produção está sendo implantado na AWS.
+
+## Qualidade
+
+- Testes de integração da API com PostgreSQL efêmero via Testcontainers
+- Testes do aplicativo com o test runner nativo do Node.js
+- Integração contínua com GitHub Actions
+- Padronização de código com ESLint e Prettier
+- Coleções Postman para validação dos contratos da API
+- Fase dedicada de QA em dispositivos reais antes da publicação
 
 ## Privacidade e segurança
 
 - Registro do aceite dos Termos de Uso e da Política de Privacidade no cadastro
-- Exclusão de conta com anonimização dos dados pessoais
+- Exclusão de conta com remoção dos dados pessoais e política de retenção definida
+- Motivos de cancelamento e recusa por códigos fixos, sem texto livre, em conformidade com a LGPD
 - Limitação de requisições nas conexões em tempo real
-- Mecanismos de denúncia e bloqueio entre usuários
+- Denúncia, bloqueio e fila de moderação
 
 ## Processo de desenvolvimento
 
 - Scrum com sprints quinzenais, gerenciadas no ClickUp
 - Times divididos por jornada: contratante e plataforma (Pod A) e candidato (Pod B)
 - Design de telas e Design System próprio no Figma
-- Git Flow simplificado (`main`, `develop`, `feature/*`, `bugfix/*`, `hotfix/*`)
+- Branches de trabalho (`feature/*`, `fix/*`) integradas à branch `develop` por Pull Request
 - Conventional Commits
-- Fase dedicada de QA e testes em dispositivos reais antes da publicação
 
 ## Equipe
 
